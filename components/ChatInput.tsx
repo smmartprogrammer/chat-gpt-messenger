@@ -1,13 +1,12 @@
 "use client";
-import useSWR from "swr";
 
+import useSWR from "swr";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { FormEvent, FormEventHandler, useState } from "react";
-import { json } from "stream/consumers";
+import { FormEvent, useState } from "react";
 import { db } from "../firebase";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import ModelSelection from "./ModelSelection";
 
 type Props = {
@@ -18,13 +17,11 @@ function ChatInput({ chatId }: Props) {
   const [prompt, setPrompt] = useState("");
   const { data: session } = useSession();
 
-  const { data: model} = useSWR("models", {
+  const { data: model } = useSWR("models", {
     fallbackData: "text-davinci-003",
   });
 
-
-
-  const sentMessage = async (e: FormEvent<HTMLFormElement>) => {
+  const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!prompt) return;
 
@@ -36,7 +33,7 @@ function ChatInput({ chatId }: Props) {
       createdAt: serverTimestamp(),
       user: {
         _id: session?.user?.email!,
-        name: session?.user?.name,
+        name: session?.user?.name!,
         avatar:
           session?.user?.image! ||
           `https://ui-avatars.com/api/?name=${session?.user?.name} `,
@@ -58,7 +55,7 @@ function ChatInput({ chatId }: Props) {
     const notification = toast.loading("ChatGPT is thinking ...");
 
     await fetch("/api/askQuestion", {
-      method: "Post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -78,7 +75,7 @@ function ChatInput({ chatId }: Props) {
 
   return (
     <div className="bg-gray-700/50 text-gray-400 rounded-lg text-sm ">
-      <form onSubmit={sentMessage} className="p-5 space-x-5 flex">
+      <form onSubmit={sendMessage} className="p-5 space-x-5 flex">
         <input
           className="bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300 "
           disabled={!session}
@@ -97,7 +94,7 @@ function ChatInput({ chatId }: Props) {
       </form>
       <div className="md:hidden">
         <ModelSelection />
-        </div>
+      </div>
     </div>
   );
 }
