@@ -40,8 +40,9 @@ function SideBar() {
 {chats?.docs.map((chat) => (
             <ChatRow key={chat.id} id={chat.id} />
 
-            </div>
           ))}
+            </div>
+
         </div>
       </div>
       {session && (
