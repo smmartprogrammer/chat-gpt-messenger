@@ -27,7 +27,6 @@ function ModelSelection() {
         onChange={(e) => setModel(e.value)}
       />
     </div>
-
 )}
 
 

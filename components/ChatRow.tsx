@@ -15,7 +15,7 @@ function ChatRow({ id }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const [active, setActive] = useState();
+  const [active, setActive] = useState(false);
 
   const [messages] = useCollection(
     query(
@@ -26,7 +26,7 @@ function ChatRow({ id }: Props) {
 
   useEffect(() => {
     if (!pathname) return;
-    
+
     setActive(pathname.includes(id));
   }, [pathname]);
 
